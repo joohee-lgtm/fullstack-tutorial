@@ -33,7 +33,16 @@ const typeDefs = gql`
     }
 
     type Query {
-        launches: [Launch]!
+        launches( #replace the current launches query with this one.
+            """
+            The Number Of Result th show. Must be >=1. Default = 20
+            """
+            pageSize: Int
+            """
+            If you add a cursor here, it will only return results _after_ this cursor
+            """
+            after: String
+        ): LaunchConnection!
         launch(id: ID!): Launch
         me: User
         LaunchIds: [Launch]
@@ -50,6 +59,18 @@ const typeDefs = gql`
         message: String
         launches: [Launch]
     }
+
+    """
+    Simple wrapper around our list of launches that contains a cursor to the
+    last item in the list. Pass this cursor to the launches query to fetch results
+    after these.
+    """
+    type LaunchConnection {
+        cursor: String!
+        hasMore: Boolean!
+        launches: [Launch]!
+    }
+
 `;
 
 module.exports = typeDefs;

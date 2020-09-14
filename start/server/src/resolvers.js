@@ -1,7 +1,26 @@
+const { paginateResults } = require('./utils');
+
 module.exports = {
     Query: {
         // fieldName: (parent, args, context, info) => data;
-        launches: (_, __, {dataSources}) => dataSources.launchAPI.getAllLaunches(),
+        launches: async (_, {pageSize = 20, after}, {dataSources}) => {
+            const allLaunchers = await dataSources.launchAPI.getAllLaunches();
+
+            allLaunchers.reverse();
+            
+            const launches = paginateResults({
+                after,
+                pageSize,
+                results: allLaunchers
+            });
+
+            return {
+                launches,
+                cursor: launches.length ? launches[launches.length -1].cursor : null,
+                hasMore: launches.length ? launches[launches.length -1].cursor !== allLaunchers[allLaunchers.length -1].cursor : false
+            }
+
+        },
         launch: (_, {id}, {dataSources}) => dataSources.launchAPI.getLaunchById({launchId: id}),
         me: (_, __, {dataSources}) => dataSources.userAPI.findOrCreateUser(),
         LaunchIds: (_, __, {dataSources}) => dataSources.userAPI.getLaunchIdsByUser()
