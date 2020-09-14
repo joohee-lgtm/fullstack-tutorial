@@ -36,6 +36,7 @@ const typeDefs = gql`
         launches: [Launch]!
         launch(id: ID!): Launch
         me: User
+        LaunchIds: [Launch]
     }
 
     type Mutation {
