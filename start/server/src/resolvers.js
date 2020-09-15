@@ -51,7 +51,42 @@ module.exports = {
             if (user) {
                 return Buffer.from(email).toString('base64')
             }
+        },
+        bookTrips: async (_, {launchIds}, {dataSources}) => {
+            const result = await dataSources.userAPI.bookTrips({launchIds});
+            const launches = await dataSources.launchAPI.getLaunchByIds({
+                launchIds,
+            });
+            const SuccessMessage = 'trips booked successfully';
+            const FailMessage = `the following launches couldn't be booked: ${
+                launchIds.filter(id => !result.includes(id))
+            }`
+
+            return {
+                success: result && result.length === launchIds.length,
+                message: result.length === launchIds.length ? SuccessMessage : FailMessage,
+                launches
+            }
+        },
+        cancelTrip: async (_, {launchId}, {dataSources}) => {
+            const result = await dataSources.userAPI.cancelTrip({launchId});
+
+            if(!result) {
+                return {
+                    success: false,
+                    message: 'fail to cancel trip'
+                }
+            }
+
+            const launch = await dataSources.launchAPI.getLaunchById({launchId});
+            
+            return {
+                success: true,
+                message: 'trip canceled',
+                launches: [launch]
+            }
         }
+        
     }
 }
 
