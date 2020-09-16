@@ -31,6 +31,7 @@ interface ResolverMap {
 
 interface AppResolvers extends Resolvers {
   Launch: ResolverMap;
+  Mutation: ResolverMap;
 }
 
 export const resolvers: AppResolvers = {
@@ -45,6 +46,27 @@ export const resolvers: AppResolvers = {
       }
 
       return false;
+    },
+  },
+  Mutation: {
+    addOrRemoveFromCart: (_, { id }, { cache }) => {
+      const queryResult = cache.readQuery<GetCartItemTypes.GetCartItems, any>({
+        query: GET_CART_ITEMS,
+      });
+
+      if (queryResult) {
+        const { cartItems } = queryResult;
+        const data = {
+          cartItems: cartItems.includes(id)
+            ? cartItems.filter((i) => i !== id)
+            : [...cartItems, id],
+        };
+
+        cache.writeQuery({ query: GET_CART_ITEMS, data });
+
+        return data.cartItems;
+      }
+      return [];
     },
   },
 };
