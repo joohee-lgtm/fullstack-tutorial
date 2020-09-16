@@ -4,24 +4,19 @@ import { gql, useQuery, from } from "@apollo/client";
 import * as LaunchDetailsTypes from "./__generated__/LaunchDetails";
 import { Loading, Header, LaunchDetail } from "../components";
 import { ActionButton } from "../containers";
+import { LAUNCH_TILE_DATA } from "./launches";
 
 export const GET_LAUNCH_DETAILS = gql`
   query LaunchDetails($launchId: ID!) {
     launch(id: $launchId) {
-      id
       site
-      isBooked
       rocket {
-        id
-        name
         type
       }
-      mission {
-        name
-        missionPatch
-      }
+      ...LaunchTile
     }
   }
+  ${LAUNCH_TILE_DATA}
 `;
 interface LaunchProps extends RouteComponentProps {
   launchId?: any;
