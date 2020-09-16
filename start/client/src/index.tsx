@@ -42,10 +42,30 @@ const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
   resolvers,
 });
 
-cache.writeData({
+// cache.writeData({
+//   data: {
+//     isLoggedIn: !!localStorage.getItem("token"),
+//     cartItems: [],
+//   },
+// });
+cache.writeQuery({
+  query: gql`
+    query GetCartItems {
+      cartItems
+    }
+  `,
   data: {
-    isLoggedIn: !!localStorage.getItem("token"),
     cartItems: [],
+  },
+});
+cache.writeQuery({
+  query: gql`
+    query IsUserLoggedIn {
+      isLoggedIn @client
+    }
+  `,
+  data: {
+    isLoggedIn: !!localStorage.getItem("token")
   },
 });
 

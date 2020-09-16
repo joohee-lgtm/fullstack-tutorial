@@ -30,7 +30,17 @@ const BookTrips: React.FC<BookTripsProps> = ({ cartItems }) => {
       variables: { launchId },
     })),
     update(cache) {
-      cache.writeData({ data: { cartItems: [] } });
+      // cache.writeData({ data: { cartItems: [] } });
+      cache.writeQuery({
+        query: gql`
+          query GetCartItems {
+            cartItems
+          }
+        `,
+        data: {
+          cartItems: [],
+        },
+      });
     },
   });
   return data && data.bookTrips && !data.bookTrips.success ? (

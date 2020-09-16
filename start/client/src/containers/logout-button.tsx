@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "react-emotion";
-import { useApolloClient } from "@apollo/client";
+import { gql, useApolloClient } from "@apollo/client";
 
 import { menuItemClassName } from "../components/menu-item";
 import { ReactComponent as ExitIcon } from "../assets/icons/exit.svg";
@@ -17,7 +17,17 @@ export default function LogoutButton() {
   return (
     <StyledButton
       onClick={() => {
-        client.writeData({ data: { isLoggedIn: false } });
+        // client.writeData({ data: { isLoggedIn: false } });
+        client.writeQuery({
+          query: gql`
+            query IsUserLoggedIn {
+              isLoggedIn @client
+            }
+          `,
+          data: {
+            isLoggedIn: false,
+          },
+        });
         localStorage.clear();
       }}
     ></StyledButton>
